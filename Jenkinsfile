@@ -1,14 +1,29 @@
 pipeline{
   agent any
   stages{
+    stage('Checkout'){
+      steps{
+        checkout scm
+      }
+    }
     stage("Build"){
       steps{
         sh 'echo Build......'
       }
     }
-    stage("Test"){
+    stage("Unit Tests"){
       steps{
         sh 'echo Testing......'
+      }
+    }
+    stage('SonarQube Analysis'){
+      steps{
+        scripts{
+          def scannerHome = tool 'SonarScanner'
+          withSonarQubeEnv('SonarScanner'){
+            sh "${scannerHome}/bin/sonar-scanner"
+          }
+        }
       }
     }
   }
